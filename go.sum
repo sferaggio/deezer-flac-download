@@ -1,0 +1,14 @@
+github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
+github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
+github.com/ddliu/go-httpclient v0.5.1 h1:ys4KozrhBaGdI1yuWIFwNNILqhnMU9ozTvRNfCTorvs=
+github.com/ddliu/go-httpclient v0.5.1/go.mod h1:8QVbjq00YK2f2MQyiKuWMdaKOFRcoD9VuubkNCNOuZo=
+github.com/go-flac/flacpicture v0.2.0 h1:rS/ZOR/ZxlEwMf3yOPFcTAmGyoV6rDtcYdd+6CwWQAw=
+github.com/go-flac/flacpicture v0.2.0/go.mod h1:M4a1J0v6B5NHsck4GA1yZg0vFQzETVPd3kuj6Ow+q9o=
+github.com/go-flac/flacvorbis v0.1.0 h1:xStJfPrZ/IoA2oBUEwgrlaSf+Opo6/YuQfkqVhkP0cM=
+github.com/go-flac/flacvorbis v0.1.0/go.mod h1:70N9vVkQ4Jew0oBWkwqDMIE21h7pMUtQJpnMD0js6XY=
+github.com/go-flac/go-flac v0.3.1 h1:BWA7HdO67S4ZLWSVHCxsDHuedFFu5RiV/wmuhvO6Hxo=
+github.com/go-flac/go-flac v0.3.1/go.mod h1:jG9IumOfAXr+7J40x0AiQIbJzXf9Y7+Zs/2CNWe4LMk=
+github.com/google/go-cmp v0.2.0 h1:+dTQ8DZQJz0Mb/HjFlkptS1FeQ4cWSnN941F8aEG4SQ=
+github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
+golang.org/x/crypto v0.1.0 h1:MDRAIl0xIo9Io2xV565hzXHw3zVseKrJKodhohM5CjU=
+golang.org/x/crypto v0.1.0/go.mod h1:RecgLatLF4+eUMCP1PoPZQb+cVrJcOPbHkTkbkB9sbw=

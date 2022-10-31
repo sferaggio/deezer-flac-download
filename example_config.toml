@@ -1,0 +1,5 @@
+arl = "abc"
+license_token = "abc"
+dest_dir = "/home/me/Downloads/deezer"
+pre_key = "hehe"
+iv = "haha"

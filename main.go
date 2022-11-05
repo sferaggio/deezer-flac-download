@@ -375,7 +375,7 @@ type resPing struct {
 
 var lastReqTime int64
 
-var REQ_MIN_INTERVAL int64 = 1000000000
+var REQ_MIN_INTERVAL int64 = 500000000
 
 func getConfig() (configuration, error) {
 	var err error

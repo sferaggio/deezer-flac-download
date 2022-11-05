@@ -23,7 +23,7 @@ import (
 	"github.com/go-flac/flacpicture"
 	"github.com/go-flac/flacvorbis"
 	"github.com/go-flac/go-flac"
-	// "github.com/davecgh/go-spew/spew"
+	"github.com/davecgh/go-spew/spew"
 )
 
 type configuration struct {
@@ -227,6 +227,10 @@ type resSongInfo struct {
 
 type resSongUrl struct {
 	Data []struct {
+		Errors []struct {
+			Code int `json:"code"`
+			Message string `json:"message"`
+		} `json:"errors"`
 		Media []struct {
 			Cipher struct {
 				Type string `json:"type"`
@@ -559,6 +563,14 @@ func getSongUrlData(trackToken string, config configuration) (resSongUrl, error)
 
 	var songUrlData resSongUrl
 	err = json.NewDecoder(res.Body).Decode(&songUrlData)
+
+	if len(songUrlData.Data) == 0 {
+		return resSongUrl{}, fmt.Errorf("got empty Data array when trying to get song URL")
+	}
+
+	if len(songUrlData.Data[0].Errors) > 0 {
+		return resSongUrl{}, fmt.Errorf("got error when trying to get song URL: %s", songUrlData.Data[0].Errors[0].Message)
+	}
 	return songUrlData, err
 }
 
@@ -581,6 +593,7 @@ func getPing(config configuration) (resPing, error) {
 
 func getSongUrl(songUrlData resSongUrl) (string, error) {
 	if len(songUrlData.Data) == 0 || len(songUrlData.Data[0].Media) == 0 {
+		spew.Fprintf(os.Stderr, "Unexpected songUrlData: %+v\n", songUrlData)
 		return "", errors.New("no FLAC version available for this song")
 	}
 	sources := songUrlData.Data[0].Media[0].Sources
@@ -855,9 +868,12 @@ func main() {
 
 			for _, song := range albumInfo.Songs.Data {
 				songUrlData, err := getSongUrlData(song.TrackToken, config)
-				if err != nil { log.Fatalf("error getting song url: %s\n", err) }
 
-				songUrl, err := getSongUrl(songUrlData)
+				var songUrl string
+				if err == nil {
+					songUrl, err = getSongUrl(songUrlData)
+				}
+
 				if err != nil {
 					msg := fmt.Sprintf("error getting URL for song \"%s\" by %s from \"%s\": %s\n",
 						song.SngTitle, song.ArtName, song.AlbTitle, err)

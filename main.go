@@ -605,6 +605,14 @@ func getSongUrl(songUrlData resSongUrl) (string, error) {
 	return sources[0].Url, nil
 }
 
+func getTitle(song resSongInfoData) string {
+	if song.Version != "" {
+		return strings.Join([]string{song.SngTitle, song.Version}, " ")
+	} else {
+		return song.SngTitle
+	}
+}
+
 func getArtist(song resSongInfoData) string {
 	artistNames := make([]string, 0)
 	for _, artist := range song.Artists {
@@ -802,10 +810,11 @@ func addTags(song resSongInfoData, path string, album resAlbum) error {
 		cmts = flacvorbis.New()
 	}
 
+	title := getTitle(song)
 	artist := getArtist(song)
 	composer := getComposer(song)
 
-	cmts.Add("TITLE", song.SngTitle)
+	cmts.Add("TITLE", title )
 	cmts.Add("ALBUM", song.AlbTitle)
 	cmts.Add("ARTIST", artist)
 	cmts.Add("ALBUMARTIST", album.Artist.Name)

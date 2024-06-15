@@ -474,33 +474,6 @@ func getFavorites(userId string, config configuration) (resTracks, error) {
 	return tracks, err
 }
 
-func getSongInfo(id int64, config configuration) (resSongInfo, error) {
-	url := fmt.Sprintf("https://www.deezer.com/de/track/%d", id)
-
-	res, err := makeReq("GET", url, nil, config)
-	if err != nil { return resSongInfo{}, err }
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
-		bytes, _ := io.ReadAll(res.Body)
-		log.Println(string(bytes))
-		return resSongInfo{}, fmt.Errorf("got status code %d", res.StatusCode)
-	}
-
-	bytes, _ := io.ReadAll(res.Body)
-	s := string(bytes)
-
-	startMarker := `window.__DZR_APP_STATE__ = `
-	endMarker := `</script>`
-	startIdx := strings.Index(s, startMarker)
-	endIdx := strings.Index(s[startIdx:], endMarker)
-	sData := s[startIdx + len(startMarker):startIdx + endIdx]
-
-	var songInfo resSongInfo
-	err = json.NewDecoder(strings.NewReader(sData)).Decode(&songInfo)
-	return songInfo, err
-}
-
 func getAlbum(albumId string, config configuration) (resAlbum, error) {
 	url := fmt.Sprintf("https://api.deezer.com/album/%s", albumId)
 	res, err := makeReq("GET", url, nil, config)
@@ -631,7 +604,7 @@ func getSongPath(song resSongInfoData, album resAlbum, config configuration) str
 	trackNum, err := strconv.Atoi(song.TrackNumber)
 	cleanArtist := strings.ReplaceAll(album.Artist.Name, "/", "-")
 	cleanAlbumTitle := strings.ReplaceAll(song.AlbTitle, "/", "-")
-	cleanSongTitle := strings.ReplaceAll(song.SngTitle, "/", "-")
+	cleanSongTitle := strings.ReplaceAll(song.SngTitle + song.Version, "/", "-")
 	if err != nil { panic(err) }
 	rawPath := fmt.Sprintf("%s/%s/%s - %s [WEB FLAC]/%02d - %s.flac", config.DestDir,
 		cleanArtist, cleanArtist, cleanAlbumTitle, trackNum, cleanSongTitle)
@@ -805,7 +778,7 @@ func addTags(song resSongInfoData, path string, album resAlbum) error {
 	artist := getArtist(song)
 	composer := getComposer(song)
 
-	cmts.Add("TITLE", song.SngTitle)
+	cmts.Add("TITLE", song.SngTitle + song.Version)
 	cmts.Add("ALBUM", song.AlbTitle)
 	cmts.Add("ARTIST", artist)
 	cmts.Add("ALBUMARTIST", album.Artist.Name)
@@ -875,8 +848,8 @@ func main() {
 				}
 
 				if err != nil {
-					msg := fmt.Sprintf("error getting URL for song \"%s\" by %s from \"%s\": %s\n",
-						song.SngTitle, song.ArtName, song.AlbTitle, err)
+					msg := fmt.Sprintf("error getting URL for song \"%s%s\" by %s from \"%s\": %s\n",
+						song.SngTitle, song.Version, song.ArtName, song.AlbTitle, err)
 					log.Print(msg)
 					logFile.Write([]byte(msg))
 					log.Print("Album download failed: " + albumId + "\n\n")

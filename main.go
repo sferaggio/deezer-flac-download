@@ -635,7 +635,9 @@ func getSongPath(song resSongInfoData, album resAlbum, config configuration) str
 	if err != nil { panic(err) }
 	rawPath := fmt.Sprintf("%s/%s/%s - %s [WEB FLAC]/%02d - %s.flac", config.DestDir,
 		cleanArtist, cleanArtist, cleanAlbumTitle, trackNum, cleanSongTitle)
-	return path.Clean(rawPath)
+	rawPath = strings.ReplaceAll(path.Clean(rawPath), "&", "and")
+	rawPath = strings.ReplaceAll(path.Clean(rawPath), ": ", "- ")
+	return rawPath
 }
 
 func calcBfKey(songId []byte, config configuration) []byte {

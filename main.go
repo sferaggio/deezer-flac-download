@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -627,17 +628,33 @@ func getComposer(song resSongInfoData) string {
 	}
 }
 
+func SanitizePath(rawPath string) string {
+	cleanPath := filepath.Clean(rawPath)
+	replacements := map[string]string{
+		"<": "-",
+		">": "-",
+		":": "-",
+		"\"": "-",
+		"/": "-",
+		"\\": "-",
+		"|": "-",
+		"?": "-",
+		"*": "-",
+	}
+	for old, new := range replacements {
+		cleanPath = strings.ReplaceAll(cleanPath, old, new)
+	}
+	return cleanPath
+}
+
 func getSongPath(song resSongInfoData, album resAlbum, config configuration) string {
 	trackNum, err := strconv.Atoi(song.TrackNumber)
-	cleanArtist := strings.ReplaceAll(album.Artist.Name, "/", "-")
-	cleanAlbumTitle := strings.ReplaceAll(song.AlbTitle, "/", "-")
-	cleanSongTitle := strings.ReplaceAll(song.SngTitle, "/", "-")
+	cleanArtist := SanitizePath(album.Artist.Name)
+	cleanAlbumTitle := SanitizePath(song.AlbTitle)
+	cleanSongTitle := SanitizePath(song.SngTitle)
 	if err != nil { panic(err) }
-	rawPath := fmt.Sprintf("%s/%s/%s - %s [WEB FLAC]/%02d - %s.flac", config.DestDir,
+	return fmt.Sprintf("%s/%s/%s - %s [WEB FLAC]/%02d - %s.flac", config.DestDir,
 		cleanArtist, cleanArtist, cleanAlbumTitle, trackNum, cleanSongTitle)
-	rawPath = strings.ReplaceAll(path.Clean(rawPath), "&", "and")
-	rawPath = strings.ReplaceAll(path.Clean(rawPath), ": ", "- ")
-	return rawPath
 }
 
 func calcBfKey(songId []byte, config configuration) []byte {

@@ -1,1 +1,3 @@
 /deezer-flac-download
+venv/
+.config.toml
